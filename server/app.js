@@ -10,7 +10,7 @@ app.use(json())
 app.use(express.urlencoded({extended: true}));
 app.use(cors({
   origin: (origin, callback) => {
-    const ACCEPTED_ORIGINS = ['http://localhost:5173', 'https://scanner.igeco.mx']
+    const ACCEPTED_ORIGINS = process.env.ACCEPTED_ORIGINS.split(',')
 
     if (ACCEPTED_ORIGINS.includes(origin)) {
       return callback(null, true)
@@ -22,7 +22,7 @@ app.use(cors({
   }
 }))
 
-const PORT = process.env.PORT || 3002
+const PORT = process.env.PORT
 
 app.post('/user-check', async (req, res) => {
     const { uuid, action } = req.body;
