@@ -35,6 +35,6 @@ jobs:
           server: '${{ secrets.SERVER }}'
           port: '${{ secrets.SSH_PORT }}'
           local_path: './server/*'
-          remote_path: '/home/hfmexico/public_html/scanner.igeco.mx'
+          remote_path: '/home/hfmexico/public_html/scanner.igeco.mx/server'
           sftp_only: true
           password: '${{ secrets.SFTP_PASSWORD }}'
