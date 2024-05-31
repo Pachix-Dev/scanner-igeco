@@ -25,16 +25,19 @@ export function QrScanner() {
     }
 
     try {
-      const response = await fetch('http://localhost:3069/user-check', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uuid: result[0].rawValue,
-          action: actionRef.current,
-        }),
-      })
+      const response = await fetch(
+        'https://scanner.igeco.mx/server/user-check',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            uuid: result[0].rawValue,
+            action: actionRef.current,
+          }),
+        }
+      )
       const data = await response.json()
       if (data.status) {
         setMessage(`Usuario encontrado: ${data.user.name}`)
