@@ -17,6 +17,16 @@ export class AttendanceModel {
             const [result] = await connection.query(' SELECT id, uuid, name, paternSurname, maternSurname, company FROM users WHERE uuid = ? ', [uuid]);
 
             if(result.length > 0){
+                
+                const [serarchUser] = await connection.query('SELECT * from users_check_ins WHERE user_id = ? ORDER BY check_in_time DESC LIMIT 1');
+
+                if(serarchUser.length > 0 && serarchUser[0].action === action){
+                    return {
+                        result: result[0],
+                        status: false,  
+                        message: 'Ya se ha registrado tu'+ action + 'no puedes realizar la misma acción'
+                    }
+                }
 
                 const [checkIns] = await connection.query('INSERT INTO users_check_ins (user_id, action) VALUES (?, ?)', [result[0].id, action]);
 

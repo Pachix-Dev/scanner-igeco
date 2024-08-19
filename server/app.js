@@ -28,8 +28,8 @@ app.post('/user-check', async (req, res) => {
     const { uuid, action } = req.body;
 
     if (!uuid || !action) {
-        return res.status(400).json({ status: false, message: 'Invalid request' });
-      }
+      return res.status(400).json({ status: false, message: 'Invalid request' });
+    }
 
     try {        
         const existingAction = await AttendanceModel.getUserActionStatus({uuid, action});

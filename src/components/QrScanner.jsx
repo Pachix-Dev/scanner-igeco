@@ -27,6 +27,7 @@ export function QrScanner() {
     try {
       const response = await fetch(
         'https://scanner.igeco.mx/server/user-check',
+        // 'http://localhost:3011/user-check',
         {
           method: 'POST',
           headers: {
