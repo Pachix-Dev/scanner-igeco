@@ -23,7 +23,7 @@ export class AttendanceModel {
                     return {
                         result: result[0],
                         status: false,  
-                        message: 'Ya se ha registrado tu'+ action + 'no puedes realizar la misma acción'
+                        message: 'Ya se ha registrado tu ' + action + ' no puedes realizar la misma acción'
                     }
                 }
 
