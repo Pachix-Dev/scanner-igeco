@@ -14,11 +14,10 @@ export class AttendanceModel {
         const connection = await mysql.createConnection(config);
 
         try {
-            const [result] = await connection.query(' SELECT id, uuid, name, paternSurname, maternSurname, company FROM users WHERE uuid = ? ', [uuid]);
-
+            const [result] = await connection.query(' SELECT id, uuid, name, company, position FROM foro_nearshoring_2024 WHERE uuid = ? ', [uuid]);
             if(result.length > 0){
                 
-                const [serarchUser] = await connection.query('SELECT * from users_check_ins WHERE user_id = ? ORDER BY check_in_time DESC LIMIT 1');
+                const [serarchUser] = await connection.query('SELECT * from users_check_ins WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1', [uuid] );
 
                 if(serarchUser.length > 0 && serarchUser[0].action === action){
                     return {
