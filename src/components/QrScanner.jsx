@@ -41,7 +41,9 @@ export function QrScanner() {
       )
       const data = await response.json()
       if (data.status) {
-        setMessage(`Usuario encontrado: ${data.user.name}`)
+        setMessage(
+          `Usuario encontrado: ${data.user.name} <br /> Compania: ${data.user.company}`
+        )
         setStatus(true)
         setTimeout(() => {
           setMessage('')
@@ -83,9 +85,8 @@ export function QrScanner() {
             ? 'text-failure'
             : ''
         }`}
-      >
-        {message}
-      </div>
+        dangerouslySetInnerHTML={{ __html: message }}
+      ></div>
     </>
   )
 }
