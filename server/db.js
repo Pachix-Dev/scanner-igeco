@@ -17,7 +17,7 @@ export class AttendanceModel {
             const [result] = await connection.query(' SELECT id, uuid, name, company, position FROM foro_nearshoring_2024 WHERE uuid = ? ', [uuid]);
             if(result.length > 0){
                 
-                const [serarchUser] = await connection.query('SELECT * from users_check_ins WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1', [uuid] );
+                const [serarchUser] = await connection.query('SELECT * from users_check_ins_nearshoring WHERE user_id = ? ORDER BY create_at DESC LIMIT 1', [uuid] );
 
                 if(serarchUser.length > 0 && serarchUser[0].action === action){
                     return {
@@ -27,7 +27,7 @@ export class AttendanceModel {
                     }
                 }
 
-                const [checkIns] = await connection.query('INSERT INTO users_check_ins (user_id, action) VALUES (?, ?)', [result[0].id, action]);
+                const [checkIns] = await connection.query('INSERT INTO users_check_ins_nearshoring (user_id, action) VALUES (?, ?)', [result[0].id, action]);
 
                 if(checkIns.affectedRows === 0){
                     return {
