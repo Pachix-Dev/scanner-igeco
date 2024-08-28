@@ -19,6 +19,8 @@ export class AttendanceModel {
                 
                 const [serarchUser] = await connection.query('SELECT * from users_check_ins_nearshoring WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [uuid] );
 
+                console.log(serarchUser)
+
                 if(serarchUser.length > 0 && serarchUser[0].action === action){
                     return {
                         result: result[0],
@@ -27,7 +29,7 @@ export class AttendanceModel {
                     }
                 }
 
-                const [checkIns] = await connection.query('INSERT INTO users_check_ins_nearshoring (user_id, action) VALUES (?, ?)', [result[0].id, action]);
+                /*const [checkIns] = await connection.query('INSERT INTO users_check_ins_nearshoring (user_id, action) VALUES (?, ?)', [result[0].id, action]);
 
                 if(checkIns.affectedRows === 0){
                     return {
@@ -39,7 +41,7 @@ export class AttendanceModel {
                 return {
                     result: result[0],
                     status: true
-                }
+                }*/
             }else{
                 return {
                     status: false,

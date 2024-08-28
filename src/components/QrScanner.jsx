@@ -42,7 +42,7 @@ export function QrScanner() {
       const data = await response.json()
       if (data.status) {
         setMessage(
-          `Usuario encontrado: ${data.user.name} <br /> Compania: ${data.user.company}`
+          `Usuario: ${data.user.name} <br /> Compania: ${data.user.company}`
         )
         setStatus(true)
         setTimeout(() => {
