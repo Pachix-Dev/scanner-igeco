@@ -44,7 +44,7 @@ app.post('/user-check', async (req, res) => {
         }else{
             return res.json({
                 status: false,
-                message: 'Usuario no encontrado / codigo invalido'
+                message: existingAction.message
             });
         }        
     } catch (err) {

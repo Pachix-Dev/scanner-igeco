@@ -15,7 +15,7 @@ export class AttendanceModel {
 
         try {
             const [result] = await connection.query(' SELECT id, uuid, name, company, position FROM foro_nearshoring_2024 WHERE uuid = ? ', [uuid]);
-            
+
             if(result.length > 0){                
                 const [serarchUser] = await connection.query('SELECT * from users_check_ins_nearshoring WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
 
@@ -43,7 +43,7 @@ export class AttendanceModel {
             }else{
                 return {
                     status: false,
-                    message: 'Usuario no encontrado '              
+                    message: 'Usuario no encontrado / codigo invalido'              
                 };
             }               
         } catch (error) {
