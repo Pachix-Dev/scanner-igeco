@@ -76,6 +76,7 @@ export function QrScanner() {
         onScan={(result) => handleScan(result)}
         allowMultiple
         paused={false}
+        scanDelay={2000}
       />
       <div
         className={`text-scanner ${
