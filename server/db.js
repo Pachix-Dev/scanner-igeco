@@ -15,8 +15,8 @@ export class AttendanceModel {
 
         try {
             const [result] = await connection.query(' SELECT id, uuid, name, company, position FROM foro_nearshoring_2024 WHERE uuid = ? ', [uuid]);
-            if(result.length > 0){
-                
+            
+            if(result.length > 0){                
                 const [serarchUser] = await connection.query('SELECT * from users_check_ins_nearshoring WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
 
                 if(serarchUser.length > 0 && serarchUser[0].action === action){
