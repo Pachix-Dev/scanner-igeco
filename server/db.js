@@ -36,12 +36,12 @@ export class AttendanceModel {
                         status: false,
                         message: 'Error al registrar entrada'
                     }
-                }
+                }*/
 
                 return {
                     result: result[0],
                     status: true
-                }*/
+                }
             }else{
                 return {
                     status: false,
