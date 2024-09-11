@@ -4,8 +4,7 @@ import './QrScanner.css'
 import useScanner from '../store/scanner'
 
 export function QrScanner() {
-  const [message, setMessage] = useState('')
-  const [status, setStatus] = useState(null)
+  const [message, setMessage] = useState()
   const { action, setAction } = useScanner()
   const actionRef = useRef(action)
 
@@ -14,20 +13,19 @@ export function QrScanner() {
   }, [action])
 
   const handleScan = async (result) => {
+    console.log('escaneando...')
     if (actionRef.current === '') {
       setMessage('Selecciona una acción primero')
-      setStatus(false)
       setTimeout(() => {
         setMessage('')
-        setStatus(null)
       }, 3000)
       return
     }
 
     try {
       const response = await fetch(
-        'https://scanner.igeco.mx/server/user-check',
-        // 'http://localhost:3011/user-check',
+        //'https://scanner.igeco.mx/server/user-check',
+        'http://localhost:3011/user-check',
         {
           method: 'POST',
           headers: {
@@ -41,21 +39,15 @@ export function QrScanner() {
       )
       const data = await response.json()
       if (data.status) {
-        setMessage(
-          `Usuario: ${data.user.name} <br /> Compania: ${data.user.company}`
-        )
-        setStatus(true)
-        setTimeout(() => {
+        setMessage(data)
+        /*setTimeout(() => {
           setMessage('')
-          setStatus(null)
-        }, 3000)
+        }, 3000)*/
       } else {
         setMessage(data.message)
-        setStatus(false)
-        setTimeout(() => {
+        /*setTimeout(() => {
           setMessage('')
-          setStatus(null)
-        }, 3000)
+        }, 3000)*/
       }
     } catch (error) {
       console.error(error)
@@ -76,18 +68,24 @@ export function QrScanner() {
         onScan={(result) => handleScan(result)}
         allowMultiple
         paused={false}
-        scanDelay={2000}
+        scanDelay={500}
       />
-      <div
-        className={`text-scanner ${
-          status === true
-            ? 'text-success'
-            : status === false
-            ? 'text-failure'
-            : ''
-        }`}
-        dangerouslySetInnerHTML={{ __html: message }}
-      ></div>
+
+      {message && (
+        <div className='text-scanner'>
+          {message?.status ? (
+            <p className='text-success'>
+              Nombre: {message.name}
+              <br />
+              Company: {message.company}
+              <br />
+              Cargo: {message.position}
+            </p>
+          ) : (
+            <span className='text-failure'>{message}</span>
+          )}
+        </div>
+      )}
     </>
   )
 }
