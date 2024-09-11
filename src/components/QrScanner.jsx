@@ -13,7 +13,6 @@ export function QrScanner() {
   }, [action])
 
   const handleScan = async (result) => {
-    console.log('escaneando...')
     if (actionRef.current === '') {
       setMessage('Selecciona una acción primero')
       setTimeout(() => {
@@ -24,8 +23,8 @@ export function QrScanner() {
 
     try {
       const response = await fetch(
-        // 'https://scanner.igeco.mx/server/user-check',
-        'http://localhost:3011/user-check',
+        'https://scanner.igeco.mx/server/user-check',
+        // 'http://localhost:3011/user-check',
         {
           method: 'POST',
           headers: {
@@ -39,15 +38,16 @@ export function QrScanner() {
       )
       const data = await response.json()
       if (data.status) {
+        console.log(data)
         setMessage(data)
-        /*setTimeout(() => {
+        setTimeout(() => {
           setMessage('')
-        }, 3000)*/
+        }, 3000)
       } else {
         setMessage(data.message)
-        /*setTimeout(() => {
+        setTimeout(() => {
           setMessage('')
-        }, 3000)*/
+        }, 3000)
       }
     } catch (error) {
       console.error(error)
@@ -74,15 +74,15 @@ export function QrScanner() {
       {message && (
         <div className='text-scanner'>
           {message?.status ? (
-            <p className='text-success'>
-              Nombre: {message.name}
+            <div className='text-success'>
+              {message.user.name}
               <br />
-              Company: {message.company}
+              <span>{message.user.position}</span>
               <br />
-              Cargo: {message.position}
-            </p>
+              <span>{message.user.company}</span>
+            </div>
           ) : (
-            <span className='text-failure'>{message}</span>
+            <div className='text-failure'>{message}</div>
           )}
         </div>
       )}
