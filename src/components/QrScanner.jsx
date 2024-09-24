@@ -70,7 +70,7 @@ export function QrScanner() {
         onScan={(result) => handleScan(result)}
         allowMultiple
         paused={false}
-        scanDelay={500}
+        scanDelay={2000}
       />
 
       {message && (
