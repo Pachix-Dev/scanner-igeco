@@ -4,6 +4,7 @@ import './QrScanner.css'
 import useScanner from '../store/scanner'
 
 export function QrScanner() {
+  const { lastRecord, setLastRecord } = useScanner()
   const [message, setMessage] = useState()
   const { action, setAction } = useScanner()
   const actionRef = useRef(action)
@@ -24,7 +25,7 @@ export function QrScanner() {
     try {
       const response = await fetch(
         'https://scanner.igeco.mx/server/user-check',
-        // 'http://localhost:3011/user-check',
+        //'http://localhost:3011/user-check',
         {
           method: 'POST',
           headers: {
@@ -40,6 +41,7 @@ export function QrScanner() {
       if (data.status) {
         console.log(data)
         setMessage(data)
+        setLastRecord(data)
         setTimeout(() => {
           setMessage('')
         }, 3000)
@@ -75,17 +77,35 @@ export function QrScanner() {
         <div className='text-scanner'>
           {message?.status ? (
             <div className='text-success'>
-              {message.user.name}
+              {message.user.nombre}
               <br />
-              <span>{message.user.position}</span>
+              <span>{message.user.cargo}</span>
               <br />
-              <span>{message.user.company}</span>
+              <span>{message.user.institucion}</span>
             </div>
           ) : (
             <div className='text-failure'>{message}</div>
           )}
         </div>
       )}
+
+      <div className='last-record'>
+        ULTIMA LECTURA:
+        <div className='text-success'>
+          <span>
+            {lastRecord?.user?.nombre} {lastRecord?.user?.paterno}{' '}
+            {lastRecord?.user?.materno}
+          </span>
+          <br />
+          {lastRecord?.user?.cargo}
+          <br />
+          {lastRecord?.user?.institucion}
+          <br />
+          <br />
+          {lastRecord?.user?.asiento_asignado} -{' '}
+          {lastRecord?.user?.primer_seccion}
+        </div>
+      </div>
     </>
   )
 }

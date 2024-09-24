@@ -17,6 +17,8 @@
 
 .text-success {
   color: green;
+  text-transform: uppercase;
+  font-size: 0.8rem; 
 }
 .text-success span{
   font-size: 1.2rem;  
@@ -31,4 +33,8 @@
 }
 .actions select{
   font-size: 1.5rem;
+}
+.last-record{
+  padding-top: 20px;
+  font-weight: bold;  
 }

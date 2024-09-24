@@ -14,10 +14,10 @@ export class AttendanceModel {
         const connection = await mysql.createConnection(config);
 
         try {
-            const [result] = await connection.query(' SELECT id, uuid, name, company, position FROM foro_electromovilidad_2024 WHERE uuid = ? ', [uuid]);
+            const [result] = await connection.query(' SELECT id, uuid, nombre, paterno, materno, institucion, cargo, asiento_asignado, primer_seccion FROM noche_industriales WHERE uuid = ? ', [uuid]);
 
             if(result.length > 0){                
-                const [serarchUser] = await connection.query('SELECT * from users_check_ins_electromovilidad WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
+                const [serarchUser] = await connection.query('SELECT * from users_check_ins_noche_industriales WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
 
                 if(serarchUser.length > 0 && serarchUser[0].action === action){
                     return {
@@ -27,7 +27,7 @@ export class AttendanceModel {
                     }
                 }
 
-                const [checkIns] = await connection.query('INSERT INTO users_check_ins_electromovilidad (user_id, action) VALUES (?, ?)', [result[0].id, action]);
+                const [checkIns] = await connection.query('INSERT INTO users_check_ins_noche_industriales (user_id, action) VALUES (?, ?)', [result[0].id, action]);
 
                 if(checkIns.affectedRows === 0){
                     return {
