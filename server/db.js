@@ -12,6 +12,19 @@ export class AttendanceModel {
 
     static async getUserActionStatus({uuid, action}) {
         const connection = await mysql.createConnection(config);
+        if(uuid === 'be463301-5da7-4492-8b6a-2b2ddd16f507'){            
+            const [checkIns] = await connection.query('INSERT INTO users_check_ins_noche_industriales (user_id, action) VALUES (?, ?)', [0, action]);
+            if(checkIns.affectedRows === 0){
+                return {
+                    status: false,
+                    message: 'Error al registrar entrada'
+                }
+            }
+            return {
+                message: 'Invitado especial',
+                status: true
+            }
+        }
 
         try {
             const [result] = await connection.query(' SELECT id, uuid, nombre, paterno, materno, institucion, cargo, asiento_asignado, primer_seccion FROM noche_industriales WHERE uuid = ? ', [uuid]);
@@ -38,6 +51,7 @@ export class AttendanceModel {
 
                 return {
                     result: result[0],
+                    message: 'Usuario encontrado',
                     status: true
                 }
             }else{

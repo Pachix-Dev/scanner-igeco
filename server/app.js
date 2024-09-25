@@ -37,8 +37,8 @@ app.post('/user-check', async (req, res) => {
         if(existingAction.status){
             return res.json({
                 status: true,
-                user: existingAction.result,
-                message: 'Usuario encontrado'
+                user: existingAction?.result,
+                message: existingAction.message
 
             });
         }else{
