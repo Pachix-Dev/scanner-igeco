@@ -27,7 +27,7 @@ export class AttendanceModel {
         }
 
         try {
-            const [result] = await connection.query(' SELECT id, uuid, nombre, paterno, materno, institucion, cargo, asiento_asignado, primer_seccion FROM noche_industriales WHERE uuid = ? ', [uuid]);
+            const [result] = await connection.query(' SELECT id, uuid, nombre, paterno, materno, institucion, cargo, asiento_asignado, seccion, fila FROM noche_industriales WHERE uuid = ? ', [uuid]);
 
             if(result.length > 0){                
                 const [serarchUser] = await connection.query('SELECT * from users_check_ins_noche_industriales WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
