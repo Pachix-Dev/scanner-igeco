@@ -102,8 +102,11 @@ export function QrScanner() {
           {lastRecord?.user?.institucion}
           <br />
           <br />
-          {lastRecord?.user?.asiento_asignado} - {lastRecord?.user?.seccion} -
-          {lastRecord?.user?.fila}
+          Asiento asignado: {lastRecord?.user?.asiento_asignado}
+          <br />
+          Seccion: {lastRecord?.user?.seccion}
+          <br />
+          Fila: {lastRecord?.user?.fila}
         </div>
       </div>
     </>
