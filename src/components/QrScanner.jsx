@@ -99,7 +99,9 @@ export function QrScanner() {
           <br />
           {lastRecord?.user?.position}
           <br />
-          {lastRecord?.user?.company}
+          {lastRecord?.user?.institucion}
+          <br />
+          <br />
         </div>
       </div>
     </>
