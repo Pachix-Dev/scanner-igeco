@@ -12,25 +12,12 @@ export class AttendanceModel {
 
     static async getUserActionStatus({uuid, action}) {
         const connection = await mysql.createConnection(config);
-        if(uuid === 'be463301-5da7-4492-8b6a-2b2ddd16f507'){            
-            const [checkIns] = await connection.query('INSERT INTO users_check_ins_noche_industriales (user_id, action) VALUES (?, ?)', [0, action]);
-            if(checkIns.affectedRows === 0){
-                return {
-                    status: false,
-                    message: 'Error al registrar entrada'
-                }
-            }
-            return {
-                message: 'Invitado especial',
-                status: true
-            }
-        }
-
+    
         try {
-            const [result] = await connection.query(' SELECT id, uuid, nombre, paterno, materno, institucion, cargo, asiento_asignado, primer_seccion FROM noche_industriales WHERE uuid = ? ', [uuid]);
+            const [result] = await connection.query(' SELECT * FROM users WHERE uuid = ? ', [uuid]);
 
             if(result.length > 0){                
-                const [serarchUser] = await connection.query('SELECT * from users_check_ins_noche_industriales WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
+                const [serarchUser] = await connection.query('SELECT * from users_check_ins WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
 
                 if(serarchUser.length > 0 && serarchUser[0].action === action){
                     return {
@@ -40,7 +27,7 @@ export class AttendanceModel {
                     }
                 }
 
-                const [checkIns] = await connection.query('INSERT INTO users_check_ins_noche_industriales (user_id, action) VALUES (?, ?)', [result[0].id, action]);
+                const [checkIns] = await connection.query('INSERT INTO users_check_ins (user_id, action) VALUES (?, ?)', [result[0].id, action]);
 
                 if(checkIns.affectedRows === 0){
                     return {

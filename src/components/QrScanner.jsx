@@ -77,11 +77,11 @@ export function QrScanner() {
         <div className='text-scanner'>
           {message?.status ? (
             <div className='text-success'>
-              {message?.user?.nombre}
+              {message?.user?.name}
               <br />
               <span>{message?.user?.cargo}</span>
               <br />
-              <span>{message?.user?.institucion}</span>
+              <span>{message?.user?.position}</span>
             </div>
           ) : (
             <div className='text-failure'>{message}</div>
@@ -93,17 +93,13 @@ export function QrScanner() {
         ULTIMA LECTURA: {lastRecord?.message}
         <div className='text-success'>
           <span>
-            {lastRecord?.user?.nombre} {lastRecord?.user?.paterno}{' '}
-            {lastRecord?.user?.materno}
+            {lastRecord?.user?.name} {lastRecord?.user?.paternSurname}{' '}
+            {lastRecord?.user?.maternSurname}
           </span>
           <br />
-          {lastRecord?.user?.cargo}
+          {lastRecord?.user?.position}
           <br />
-          {lastRecord?.user?.institucion}
-          <br />
-          <br />
-          {lastRecord?.user?.asiento_asignado} -{' '}
-          {lastRecord?.user?.primer_seccion}
+          {lastRecord?.user?.company}
         </div>
       </div>
     </>
