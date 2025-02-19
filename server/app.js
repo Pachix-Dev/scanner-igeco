@@ -2,12 +2,12 @@ import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import pkg from 'body-parser';
-import {AttendanceModel} from './db.js';
+import { AttendanceModel } from './db.js';
 
 const { json } = pkg
 const app = express()
 app.use(json())
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: (origin, callback) => {
     const ACCEPTED_ORIGINS = process.env.ACCEPTED_ORIGINS.split(',')
@@ -26,47 +26,46 @@ const PORT = process.env.PORT
 
 const ACTION_HANDLERS = {
   general: ({ uuid, action }) => AttendanceModel.save_acceso_general({ uuid, action }),
-  ecopitch: ({ uuid, action }) => AttendanceModel.save_acceso_ecopitch({ uuid, action }),
   ecostage: ({ uuid, action }) => AttendanceModel.save_acceso_ecostage({ uuid, action }),
+  ecopitch: ({ uuid, action }) => AttendanceModel.save_acceso_ecopitch({ uuid, action }),
   defaultAction: () => Promise.reject(new Error('Acción no válida')),
 };
 
 
 app.post('/accesos-aforo', async (req, res) => {
-    const { uuid, action, escenario } = req.body;
+  const { uuid, action, escenario } = req.body;
 
-    if (!uuid || !action) {
-      return res.status(400).json({ status: false, message: 'Invalid request' });
+  if (!uuid || !action) {
+    return res.status(400).json({ status: false, message: 'Invalid request' });
+  }
+
+  try {
+    const actionFunction = ACTION_HANDLERS[escenario] || ACTION_HANDLERS.defaultAction;
+    const response = await actionFunction({ uuid, action });
+    
+    if (response.status) {
+      return res.json({
+        status: true,
+        user: response?.result,
+        message: response.message
+
+      });
+    } else {
+      return res.json({
+        status: false,
+        message: response.message
+      });
     }
-  
-
-    try {        
-      const actionFunction = ACTION_HANDLERS[escenario] || ACTION_HANDLERS.defaultAction;
-                
-        if(actionFunction.status){
-            return res.json({
-                status: true,
-                user: actionFunction?.result,
-                message: actionFunction.message
-
-            });
-        }else{
-            return res.json({
-                status: false,
-                message: actionFunction.message
-            });
-        }        
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            status: false,
-            message: 'Failed to perform user check-in/check-out'
-        });
-    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: 'Failed to perform user check-in/check-out'
+    });
+  }
 });
 
 
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
+  console.log(`Server is running on port ${PORT}`)
 })

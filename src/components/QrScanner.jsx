@@ -9,6 +9,8 @@ export function QrScanner() {
   const { action, setAction } = useScanner()
   const actionRef = useRef(action)
 
+  const [placeRegister, setPlaceRegister] = useState('ecostage')
+
   useEffect(() => {
     actionRef.current = action
   }, [action])
@@ -33,12 +35,11 @@ export function QrScanner() {
         body: JSON.stringify({
           uuid: result[0].rawValue,
           action: actionRef.current,
-          escenario: 'general',
+          escenario: placeRegister,
         }),
       })
       const data = await response.json()
       if (data.status) {
-        console.log(data)
         setMessage(data)
         setLastRecord(data)
         setTimeout(() => {
@@ -58,6 +59,8 @@ export function QrScanner() {
 
   return (
     <>
+      <p>registro para: {placeRegister}</p>
+      <br />
       <div className='actions'>
         <select onChange={(e) => setAction(e.target.value)} value={action}>
           <option value=''>Selecciona una acción</option>
