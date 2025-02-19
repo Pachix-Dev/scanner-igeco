@@ -1,19 +1,20 @@
 import { Scanner } from '@yudiel/react-qr-scanner'
 import { useEffect, useRef, useState } from 'react'
 import './QrScanner.css'
+import './MenuStyles.css'
 import useScanner from '../store/scanner'
 
 export function QrScanner() {
   const { lastRecord, setLastRecord } = useScanner()
   const [message, setMessage] = useState()
-  const { action, setAction } = useScanner()
+  const { action, setAction, scenario, setScenario } = useScanner()
   const actionRef = useRef(action)
-
-  const [placeRegister, setPlaceRegister] = useState('ecostage')
+  const scenarioRef = useRef(scenario)
 
   useEffect(() => {
     actionRef.current = action
-  }, [action])
+    scenarioRef.current = scenario
+  }, [action, scenario])
 
   const handleScan = async (result) => {
     if (actionRef.current === '') {
@@ -35,7 +36,7 @@ export function QrScanner() {
         body: JSON.stringify({
           uuid: result[0].rawValue,
           action: actionRef.current,
-          escenario: placeRegister,
+          escenario: scenarioRef.current,
         }),
       })
       const data = await response.json()
@@ -59,21 +60,30 @@ export function QrScanner() {
 
   return (
     <>
-      <p>registro para: {placeRegister}</p>
-      <br />
+      <p className='actions'>Registro para: {scenario}</p>
       <div className='actions'>
+        <select value={scenario} onChange={(e) => {
+          setScenario(e.target.value)
+        }}>
+          <option value="General">General</option>
+          <option value="EnlightenmentArea">ENLIGHTENMENT AREA</option>
+          <option value="InnovationArea">INSTALLERS & INNOVATION AREA</option>
+          <option value="EcoStage">EcoStage</option>
+          <option value="EcoPitch">EcoPitch</option>
+          <option value="VIP" disabled>VIP</option>
+        </select>
         <select onChange={(e) => setAction(e.target.value)} value={action}>
-          <option value=''>Selecciona una acción</option>
-          <option value='check-in'>Checar entradas</option>
+          <option defaultChecked value='check-in'>Checar entradas</option>
           <option value='check-out'>Checar salidas</option>
         </select>
       </div>
-      <Scanner
+
+      {<Scanner
         onScan={(result) => handleScan(result)}
         allowMultiple
         paused={false}
         scanDelay={2000}
-      />
+      />}
 
       {message && (
         <div className='text-scanner'>

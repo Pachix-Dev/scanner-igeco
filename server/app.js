@@ -25,15 +25,19 @@ app.use(cors({
 const PORT = process.env.PORT
 
 const ACTION_HANDLERS = {
-  general: ({ uuid, action }) => AttendanceModel.save_acceso_general({ uuid, action }),
-  ecostage: ({ uuid, action }) => AttendanceModel.save_acceso_ecostage({ uuid, action }),
-  ecopitch: ({ uuid, action }) => AttendanceModel.save_acceso_ecopitch({ uuid, action }),
+  General: ({ uuid, action }) => AttendanceModel.save_acceso_general({ uuid, action }),
+  EcoStage: ({ uuid, action }) => AttendanceModel.save_acceso_ecostage({ uuid, action }),
+  EcoPitch: ({ uuid, action }) => AttendanceModel.save_acceso_ecopitch({ uuid, action }),
+  EnlightenmentArea: ({ uuid, action }) => AttendanceModel.save_acceso_enlightenmentarea({ uuid, action }),
+  InnovationArea: ({ uuid, action }) => AttendanceModel.save_acceso_innovationarea({ uuid, action }),
+
   defaultAction: () => Promise.reject(new Error('Acción no válida')),
 };
 
 
 app.post('/accesos-aforo', async (req, res) => {
   const { uuid, action, escenario } = req.body;
+  console.log({ uuid, action, escenario });
 
   if (!uuid || !action) {
     return res.status(400).json({ status: false, message: 'Invalid request' });
@@ -42,7 +46,7 @@ app.post('/accesos-aforo', async (req, res) => {
   try {
     const actionFunction = ACTION_HANDLERS[escenario] || ACTION_HANDLERS.defaultAction;
     const response = await actionFunction({ uuid, action });
-    
+
     if (response.status) {
       return res.json({
         status: true,

@@ -5,10 +5,12 @@ const useScanner = create(
     persist(
         (set) => ({
             action: '',
+            scenario: '',
             lastRecord: {},
 
             setAction: (action) => set({ action }),
-            setLastRecord: (lastRecord) => set({lastRecord})
+            setScenario: (scenario) => set({ scenario }),
+            setLastRecord: (lastRecord) => set({ lastRecord })
         }),
         {
             name: 'scanner',

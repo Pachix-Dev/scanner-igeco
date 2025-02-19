@@ -1,0 +1,24 @@
+.fairs-tab {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    list-style: none;
+    padding: 4;
+}
+
+.fairs-tab li {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: grey;
+    cursor: pointer;
+}
+
+.fairs-tab li:hover {
+    background-color: rgb(82, 82, 82);
+}
+
+/* TaBs  */
+
