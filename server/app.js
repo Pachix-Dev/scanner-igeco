@@ -24,27 +24,36 @@ app.use(cors({
 
 const PORT = process.env.PORT
 
-app.post('/user-check', async (req, res) => {
-    const { uuid, action } = req.body;
+const ACTION_HANDLERS = {
+  general: ({ uuid, action }) => AttendanceModel.save_acceso_general({ uuid, action }),
+  ecopitch: ({ uuid, action }) => AttendanceModel.save_acceso_ecopitch({ uuid, action }),
+  ecostage: ({ uuid, action }) => AttendanceModel.save_acceso_ecostage({ uuid, action }),
+  defaultAction: () => Promise.reject(new Error('Acción no válida')),
+};
+
+
+app.post('/accesos-aforo', async (req, res) => {
+    const { uuid, action, escenario } = req.body;
 
     if (!uuid || !action) {
       return res.status(400).json({ status: false, message: 'Invalid request' });
     }
+  
 
     try {        
-        const existingAction = await AttendanceModel.getUserActionStatus({uuid, action});
+      const actionFunction = ACTION_HANDLERS[escenario] || ACTION_HANDLERS.defaultAction;
                 
-        if(existingAction.status){
+        if(actionFunction.status){
             return res.json({
                 status: true,
-                user: existingAction?.result,
-                message: existingAction.message
+                user: actionFunction?.result,
+                message: actionFunction.message
 
             });
         }else{
             return res.json({
                 status: false,
-                message: existingAction.message
+                message: actionFunction.message
             });
         }        
     } catch (err) {
@@ -55,6 +64,8 @@ app.post('/user-check', async (req, res) => {
         });
     }
 });
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)

@@ -10,24 +10,15 @@ const config = {
 
 export class AttendanceModel {
 
-    static async getUserActionStatus({uuid, action}) {
+    static async save_acceso_general({uuid, action}) {
         const connection = await mysql.createConnection(config);
     
         try {
             const [result] = await connection.query(' SELECT * FROM users WHERE uuid = ? ', [uuid]);
 
             if(result.length > 0){                
-                const [serarchUser] = await connection.query('SELECT * from users_check_ins WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [result[0].id] );                
-
-                if(serarchUser.length > 0 && serarchUser[0].action === action){
-                    return {
-                        result: result[0],
-                        status: false,  
-                        message: 'Ya se ha registrado tu ' + action + ' no puedes realizar la misma acción'
-                    }
-                }
-
-                const [checkIns] = await connection.query('INSERT INTO users_check_ins (user_id, action) VALUES (?, ?)', [result[0].id, action]);
+                
+                const [checkIns] = await connection.query('INSERT INTO aforo (uuid, action) VALUES (?, ?)', [uuid, action]);
 
                 if(checkIns.affectedRows === 0){
                     return {
@@ -55,6 +46,7 @@ export class AttendanceModel {
         } finally {
             await connection.end(); // Close the connection
         }
-  }
+    }
     
+
 }

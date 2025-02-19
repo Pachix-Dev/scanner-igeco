@@ -21,22 +21,21 @@ export function QrScanner() {
       }, 3000)
       return
     }
-
+    const url = import.meta.env.DEV
+      ? 'http://localhost:3011'
+      : 'https://scanner.igeco.mx/server'
     try {
-      const response = await fetch(
-        'https://scanner.igeco.mx/server/user-check',
-        //'http://localhost:3011/user-check',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            uuid: result[0].rawValue,
-            action: actionRef.current,
-          }),
-        }
-      )
+      const response = await fetch(url + '/accesos-aforo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uuid: result[0].rawValue,
+          action: actionRef.current,
+          escenario: 'general',
+        }),
+      })
       const data = await response.json()
       if (data.status) {
         console.log(data)
