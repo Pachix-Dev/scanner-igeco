@@ -30,6 +30,8 @@ const ACTION_HANDLERS = {
   EcoPitch: ({ uuid, action }) => AttendanceModel.save_acceso_ecopitch({ uuid, action }),
   EnlightenmentArea: ({ uuid, action }) => AttendanceModel.save_acceso_enlightenmentarea({ uuid, action }),
   InnovationArea: ({ uuid, action }) => AttendanceModel.save_acceso_innovationarea({ uuid, action }),
+  VIP: ({ uuid, action }) => AttendanceModel.save_acceso_vip({ uuid, action }),
+  energyNight: ({ uuid, action }) => AttendanceModel.save_acceso_energynight({ uuid, action }),
 
   defaultAction: () => Promise.reject(new Error('Acción no válida')),
 };
@@ -37,7 +39,6 @@ const ACTION_HANDLERS = {
 
 app.post('/accesos-aforo', async (req, res) => {
   const { uuid, action, escenario } = req.body;
-  console.log({ uuid, action, escenario });
 
   if (!uuid || !action) {
     return res.status(400).json({ status: false, message: 'Invalid request' });
@@ -46,6 +47,7 @@ app.post('/accesos-aforo', async (req, res) => {
   try {
     const actionFunction = ACTION_HANDLERS[escenario] || ACTION_HANDLERS.defaultAction;
     const response = await actionFunction({ uuid, action });
+    console.log(response);
 
     if (response.status) {
       return res.json({
@@ -67,8 +69,6 @@ app.post('/accesos-aforo', async (req, res) => {
     });
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)

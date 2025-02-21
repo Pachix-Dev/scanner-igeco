@@ -66,11 +66,12 @@ export function QrScanner() {
           setScenario(e.target.value)
         }}>
           <option value="General">General</option>
-          <option value="EnlightenmentArea">ENLIGHTENMENT AREA</option>
-          <option value="InnovationArea">INSTALLERS & INNOVATION AREA</option>
-          <option value="EcoStage">EcoStage</option>
-          <option value="EcoPitch">EcoPitch</option>
-          <option value="VIP" disabled>VIP</option>
+          <option className='replus' value="EnlightenmentArea">ENLIGHTENMENT AREA</option>
+          <option className='replus' value="InnovationArea">INSTALLERS & INNOVATION AREA</option>
+          <option className='replus' value="VIP">VIP</option>
+          <option className='replus' value="energyNight">Energy night</option>
+          <option className='ecomondo' value="EcoStage">EcoStage</option>
+          <option className='ecomondo' value="EcoPitch">EcoPitch</option>
         </select>
         <select onChange={(e) => setAction(e.target.value)} value={action}>
           <option defaultChecked value='check-in'>Checar entradas</option>
@@ -94,6 +95,8 @@ export function QrScanner() {
               <span>{message?.user?.position}</span>
               <br />
               <span>{message?.user?.company}</span>
+              <br />
+              <span>{message?.message}</span>
             </div>
           ) : (
             <div className='text-failure'>{message}</div>
