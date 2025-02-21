@@ -55,3 +55,14 @@
   color: #aa3702;
 
 }
+
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions select > option {
+    font-size: 1rem;
+  }
+  
+}
