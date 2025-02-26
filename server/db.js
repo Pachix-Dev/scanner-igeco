@@ -239,6 +239,48 @@ export class AttendanceModel {
         }
     }
 
+    static async save_acceso_area_vip({ uuid, action }) {        
+        try {
+            const queries = [
+                db_replus.query('SELECT * FROM users WHERE uuid = ? limit 1', [uuid]),
+                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? limit 1', [uuid]),
+                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? limit 1', [uuid]),
+                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? limit 1', [uuid])
+            ];
+
+            const [resultGral, resultEcom, resultExhibitor, resultPonente] = await Promise.all(queries);
+
+            const result = resultGral.length > 0 ? resultGral :
+                           resultEcom.length > 0 ? resultEcom :
+                           resultExhibitor.length > 0 ? resultExhibitor :
+                           resultPonente;
+            if (result.length > 0) {
+                const [checkIns] = await db_replus.query('INSERT INTO asistencia_area_vip (uuid, action) VALUES (?, ?)', [uuid, action]);
+                if (checkIns.affectedRows === 0) {
+                    return {
+                        status: false,
+                        message: 'Error al registrar entrada'
+                    }
+                }
+                return {
+                    result: result[0],
+                    message: 'Usuario encontrado',
+                    status: true
+                }
+            } else {
+                return {
+                    status: false,
+                    message: 'Error en el servidor. Intente de nuevo.'
+                };
+            }
+        } catch (error) {
+            console.log(error)
+            return {
+                status: false,
+            }
+        }
+    }
+
     static async save_acceso_vip({ uuid, action }) {       
         try {
             const [result] = await db_replus.query(' SELECT * FROM users WHERE uuid = ? limit 1', [uuid]);
