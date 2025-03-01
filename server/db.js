@@ -293,14 +293,8 @@ export class AttendanceModel {
         try {
             const [result] = await db_replus.query(' SELECT * FROM users WHERE uuid = ? limit 1', [uuid]);
             if (result.length > 0) {
-                const { uuid } = result[0];
-                const [checkAction] = await db_replus.query('select COUNT(*) as cant, uuid, action, max(time) as time from asistencia_vip WHERE uuid = ? GROUP BY action', [uuid]);
-
-                const entrances = checkAction[0] ? checkAction[0].cant : 0;
-                const exits = checkAction[1] ? checkAction[1].cant : 0;
-
-                if (action === 'check-in') {
-                    if (entrances === exits) {
+                const { uuid } = result[0];                                
+                if (action === 'check-in') {                    
                         const [checkProduct] = await db_replus.query(`select ure.id, ure.user_id, u.uuid, p.id as productId, p.name from users_replus_vip ure join products p on p.id = ure.id_item join users u on u.id = ure.user_id WHERE u.uuid = ?`, [uuid]);
 
                         if (checkProduct.length === 0) return { status: false, message: 'No tienes este producto' };
@@ -312,7 +306,7 @@ export class AttendanceModel {
                         }
                         else if (checkProduct.some(product => [3, 4, 5].includes(product.productId))) {
 
-                            const date = new Date(2025, 2, 7);
+                            const date = new Date();
                             const today = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
 
                             if (checkProduct.some(product => today.includes(productsDates[product.productId]))) {
@@ -322,25 +316,12 @@ export class AttendanceModel {
                                 return { status: false, message: 'Fecha de entrada no es válida' };
                             }
                         }
-                        return { status: false, message: 'No tienes acceso' };
-                    }
-                    return {
-                        status: false,
-                        message: 'Entrada ya registrada. No puedes entrar dos veces'
-                    }
+                        return { status: false, message: 'No tienes acceso' };                    
                 }
 
-                else if (action === 'check-out') {
-
-                    if (entrances === (exits + 1)) {
-                        const [checkIns] = await db_replus.query('INSERT INTO asistencia_vip (uuid, action) VALUES (?, ?)', [uuid, action]);
-                        if (checkIns.affectedRows > 0) return { status: true, message: 'Acceso VIP: Salida registrada con éxito', result: result[0] };
-                    }
-
-                    return {
-                        status: false,
-                        message: 'La salida ya se encuentra registrada'
-                    }
+                else if (action === 'check-out') {                    
+                    const [checkIns] = await db_replus.query('INSERT INTO asistencia_vip (uuid, action) VALUES (?, ?)', [uuid, action]);
+                    if (checkIns.affectedRows > 0) return { status: true, message: 'Acceso VIP: Salida registrada con éxito', result: result[0] };                    
                 }
                 else {
                     return {
@@ -366,38 +347,19 @@ export class AttendanceModel {
         try {
             const [result] = await db_replus.query(' SELECT * FROM users WHERE uuid = ? limit 1', [uuid]);
             if (result.length > 0) {
-                const { uuid } = result[0];
-                const [checkAction] = await db_replus.query('select COUNT(*) as cant, uuid, action, max(time) as time from asistencia_energynight WHERE uuid = ? GROUP BY action', [uuid]);
-
-                const entrances = checkAction[0] ? checkAction[0].cant : 0;
-                const exits = checkAction[1] ? checkAction[1].cant : 0;
-
-                if (action === 'check-in') {
-                    if (entrances === exits) {
+                const { uuid } = result[0];                
+                if (action === 'check-in') {                    
                         const [checkProduct] = await db_replus.query(`select ure.id, ure.user_id, u.uuid, p.id as productId, p.name from users_replus_vip ure join products p on p.id = ure.id_item join users u on u.id = ure.user_id WHERE u.uuid = ? AND p.id <= 2 `, [uuid]);
 
                         if (checkProduct.length === 0) return { status: false, message: 'No tienes este producto' };
 
                         const [checkIns] = await db_replus.query('INSERT INTO asistencia_energynight (uuid, action) VALUES (?, ?)', [uuid, action]);
-                        if (checkIns.affectedRows > 0) return { status: true, message: 'Acceso VIP: Entrada registrada con éxito', result: result[0]  };
-                    }
-                    return {
-                        status: false,
-                        message: 'Entrada ya registrada. No puedes entrar dos veces'
-                    }
+                        if (checkIns.affectedRows > 0) return { status: true, message: 'Acceso VIP: Entrada registrada con éxito', result: result[0]  };                    
                 }
-
                 else if (action === 'check-out') {
-
-                    if (entrances === (exits + 1)) {
+                    
                         const [checkIns] = await db_replus.query('INSERT INTO asistencia_energynight (uuid, action) VALUES (?, ?)', [uuid, action]);
-                        if (checkIns.affectedRows > 0) return { status: true, message: 'Acceso VIP: Salida registrada con éxito', result: result[0] };
-                    }
-
-                    return {
-                        status: false,
-                        message: 'La salida ya se encuentra registrada'
-                    }
+                        if (checkIns.affectedRows > 0) return { status: true, message: 'Acceso VIP: Salida registrada con éxito', result: result[0] };                                   
                 }
                 else {
                     return {
