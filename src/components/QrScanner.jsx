@@ -1,29 +1,44 @@
 import { Scanner } from '@yudiel/react-qr-scanner'
-import { useEffect, useRef, useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './QrScanner.css'
 import './MenuStyles.css'
-import useScanner from '../store/scanner'
+import { useScanner } from '../store/scanner'
 
 export function QrScanner() {
-  const { lastRecord, setLastRecord } = useScanner()
-  const [message, setMessage] = useState()
-  const { action, setAction, scenario, setScenario } = useScanner()
+  const {
+    action,
+    lastRecord,
+    scenario,
+    setLastRecord,
+    setAction,
+    setScenario,
+  } = useScanner()
+
+  const [message, setMessage] = useState('')
+  const [styleMessage, setStyleMessage] = useState('')
+
   const actionRef = useRef(action)
   const scenarioRef = useRef(scenario)
 
   useEffect(() => {
     actionRef.current = action
+  }, [action])
+
+  useEffect(() => {
     scenarioRef.current = scenario
-  }, [action, scenario])
+  }, [scenario])
 
   const handleScan = async (result) => {
-    if (actionRef.current === '') {
+    if (actionRef.current === '' || scenarioRef.current === '') {
       setMessage('Selecciona una acción primero')
+      setStyleMessage('text-failure')
       setTimeout(() => {
         setMessage('')
+        setStyleMessage('')
       }, 3000)
       return
     }
+    console.log(scenarioRef.current)
     const url = import.meta.env.DEV
       ? 'http://localhost:3011'
       : 'https://scanner.igeco.mx/server'
@@ -40,21 +55,30 @@ export function QrScanner() {
         }),
       })
       const data = await response.json()
+      console.log(data)
       if (data.status) {
-        setMessage(data)
-        setLastRecord(data)
+        setStyleMessage('text-success')
+        setMessage(data.message)
+        setLastRecord(data.user)
         setTimeout(() => {
           setMessage('')
+          setStyleMessage('')
         }, 3000)
       } else {
+        setStyleMessage('text-failure')
         setMessage(data.message)
         setTimeout(() => {
           setMessage('')
+          setStyleMessage('')
         }, 3000)
       }
     } catch (error) {
-      console.error(error)
+      setStyleMessage('text-failure')
       setMessage('No se pudo conectar al servidor')
+      setTimeout(() => {
+        setMessage('')
+        setStyleMessage('')
+      }, 3000)
     }
   }
 
@@ -62,59 +86,51 @@ export function QrScanner() {
     <>
       <p className='actions'>Registro para: {scenario}</p>
       <div className='actions'>
-        <select value={scenario} onChange={(e) => {
-          setScenario(e.target.value)
-        }}>
-          <option value="General">General</option>
-          <option className='replus' value="EnlightenmentArea">ENLIGHTENMENT AREA</option>
-          <option className='replus' value="InnovationArea">INSTALLERS & INNOVATION AREA</option>
-          <option className='replus' value="VIP">VIP</option>
-          <option className='replus' value="energyNight">Energy night</option>
-          <option className='ecomondo' value="EcoStage">EcoStage</option>
-          <option className='ecomondo' value="EcoPitch">EcoPitch</option>
+        <select
+          value={scenario}
+          onChange={(e) => {
+            setScenario(e.target.value)
+          }}
+        >
+          <option value=''>SELECCIONE UN VALOR</option>
+          <option value='General'>GENERAL</option>
+          <option value='EnlightenmentArea'>ENLIGHTENMENT AREA</option>
+          <option value='InnovationArea'>INSTALLERS & INNOVATION AREA</option>
+          <option value='VIP'>PROGRAMA VIP</option>
+          <option value='energyNight'>ENEGR NIGHT</option>
+          <option value='EcoStage'>ECOSTAGE</option>
+          <option value='EcoPitch'>ECOPITCH</option>
+          <option value='AreaVip'>AREA VIP</option>
         </select>
         <select onChange={(e) => setAction(e.target.value)} value={action}>
-          <option defaultChecked value='check-in'>Checar entradas</option>
-          <option value='check-out'>Checar salidas</option>
+          <option value=''>SELECCIONE UN VALOR</option>
+          <option value='check-in'>CHECAR ENTRADAS</option>
+          <option value='check-out'>CHECAR SALIDAS</option>
         </select>
       </div>
 
-      {<Scanner
-        onScan={(result) => handleScan(result)}
-        allowMultiple
-        paused={false}
-        scanDelay={2000}
-      />}
+      {
+        <Scanner
+          onScan={(result) => handleScan(result)}
+          allowMultiple
+          paused={false}
+          scanDelay={2000}
+        />
+      }
 
-      {message && (
-        <div className='text-scanner'>
-          {message?.status ? (
-            <div className='text-success'>
-              {message?.user?.name}
-              <br />
-              <span>{message?.user?.position}</span>
-              <br />
-              <span>{message?.user?.company}</span>
-              <br />
-              <span>{message?.message}</span>
-            </div>
-          ) : (
-            <div className='text-failure'>{message}</div>
-          )}
-        </div>
-      )}
+      {message && <div className={styleMessage}>{message}</div>}
 
       <div className='last-record'>
-        ULTIMA LECTURA: {lastRecord?.message}
+        ULTIMA LECTURA ECONTRADA:
         <div className='text-success'>
           <span>
-            {lastRecord?.user?.name} {lastRecord?.user?.paternSurname}{' '}
-            {lastRecord?.user?.maternSurname}
+            {lastRecord?.name} {lastRecord?.paternSurname}{' '}
+            {lastRecord?.maternSurname}
           </span>
           <br />
-          {lastRecord?.user?.position}
+          {lastRecord?.position}
           <br />
-          {lastRecord?.user?.company}
+          {lastRecord?.company}
           <br />
           <br />
         </div>

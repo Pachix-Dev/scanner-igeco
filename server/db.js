@@ -27,66 +27,70 @@ export class AttendanceModel {
     static async save_acceso_general({ uuid, action }) {
         try {
             const queries = [
-                db_replus.query('SELECT * FROM users WHERE uuid = ? limit 1', [uuid]),
-                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? limit 1', [uuid])
+                db_replus.query('SELECT * FROM users WHERE uuid = ? LIMIT 1', [uuid]),
+                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? LIMIT 1', [uuid])
             ];
-
-            const [resultGral, resultEcom, resultExhibitor, resultPonente] = await Promise.all(queries);
-
-            const result = resultGral.length > 0 ? resultGral :
-                           resultEcom.length > 0 ? resultEcom :
-                           resultExhibitor.length > 0 ? resultExhibitor :
-                           resultPonente;
-
-            if (result.length > 0) {
-                const [checkIns] = await db_replus.query('INSERT INTO aforo (uuid, action) VALUES (?, ?)', [uuid, action]);
-
+            
+            const results = await Promise.all(queries);
+    
+            // Extract only the data results (ignoring schema metadata)
+            const user = results
+                .map(res => res[0])  // Extract only the first element of each query result
+                .find(data => data.length > 0); // Find the first non-empty result
+    
+            if (user && user.length > 0) {
+                const [checkIns] = await db_replus.query(
+                    'INSERT INTO aforo (uuid, action) VALUES (?, ?)',
+                    [uuid, action]
+                );
+    
                 if (checkIns.affectedRows === 0) {
                     return {
                         status: false,
                         message: 'Error al registrar entrada'
                     };
                 }
-
+    
                 return {
-                    result: result[0],
+                    result: user[0], // Return the first matched user object
                     message: 'Usuario encontrado',
                     status: true
                 };
             } else {
                 return {
                     status: false,
-                    message: 'Usuario no encontrado en ninguna tabla'
+                    message: 'Usuario no encontrado / Código inválido'
                 };
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return {
                 status: false,
                 message: 'Error en el servidor. Intente de nuevo.'
             };
         }
     }
+    
 
     static async save_acceso_ecostage({ uuid, action }) {        
         try {
             const queries = [
-                db_replus.query('SELECT * FROM users WHERE uuid = ? limit 1', [uuid]),
-                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? limit 1', [uuid])
+                db_replus.query('SELECT * FROM users WHERE uuid = ? LIMIT 1', [uuid]),
+                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? LIMIT 1', [uuid])
             ];
-
-            const [resultGral, resultEcom, resultExhibitor, resultPonente] = await Promise.all(queries);
-
-            const result = resultGral.length > 0 ? resultGral :
-                           resultEcom.length > 0 ? resultEcom :
-                           resultExhibitor.length > 0 ? resultExhibitor :
-                           resultPonente;
-
-            if (result.length > 0) {
+            
+            const results = await Promise.all(queries);
+    
+            // Extract only the data results (ignoring schema metadata)
+            const user = results
+                .map(res => res[0])  // Extract only the first element of each query result
+                .find(data => data.length > 0); // Find the first non-empty result
+    
+            if (user && user.length > 0) {
                 const [checkIns] = await db_replus.query('INSERT INTO asistencia_ecostage (uuid, action) VALUES (?, ?)', [uuid, action]);
                 if (checkIns.affectedRows === 0) {
                     return {
@@ -95,7 +99,7 @@ export class AttendanceModel {
                     }
                 }
                 return {
-                    result: result[0],
+                    result: user[0],
                     message: 'Usuario encontrado',
                     status: true
                 }
@@ -116,19 +120,20 @@ export class AttendanceModel {
     static async save_acceso_ecopitch({ uuid, action }) {       
         try {
             const queries = [
-                db_replus.query('SELECT * FROM users WHERE uuid = ? limit 1', [uuid]),
-                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? limit 1', [uuid])
+                db_replus.query('SELECT * FROM users WHERE uuid = ? LIMIT 1', [uuid]),
+                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? LIMIT 1', [uuid])
             ];
-
-            const [resultGral, resultEcom, resultExhibitor, resultPonente] = await Promise.all(queries);
-
-            const result = resultGral.length > 0 ? resultGral :
-                           resultEcom.length > 0 ? resultEcom :
-                           resultExhibitor.length > 0 ? resultExhibitor :
-                           resultPonente;
-            if (result.length > 0) {
+            
+            const results = await Promise.all(queries);
+    
+            // Extract only the data results (ignoring schema metadata)
+            const user = results
+                .map(res => res[0])  // Extract only the first element of each query result
+                .find(data => data.length > 0); // Find the first non-empty result
+    
+            if (user && user.length > 0) {
                 const [checkIns] = await db_replus.query('INSERT INTO asistencia_ecopitch (uuid, action) VALUES (?, ?)', [uuid, action]);
                 if (checkIns.affectedRows === 0) {
                     return {
@@ -137,7 +142,7 @@ export class AttendanceModel {
                     }
                 }
                 return {
-                    result: result[0],
+                    result: user[0],
                     message: 'Usuario encontrado',
                     status: true
                 }
@@ -158,19 +163,20 @@ export class AttendanceModel {
     static async save_acceso_enlightenmentarea({ uuid, action }) {
         try {
             const queries = [
-                db_replus.query('SELECT * FROM users WHERE uuid = ? limit 1', [uuid]),
-                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? limit 1', [uuid])
+                db_replus.query('SELECT * FROM users WHERE uuid = ? LIMIT 1', [uuid]),
+                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? LIMIT 1', [uuid])
             ];
-
-            const [resultGral, resultEcom, resultExhibitor, resultPonente] = await Promise.all(queries);
-
-            const result = resultGral.length > 0 ? resultGral :
-                           resultEcom.length > 0 ? resultEcom :
-                           resultExhibitor.length > 0 ? resultExhibitor :
-                           resultPonente;
-            if (result.length > 0) {
+            
+            const results = await Promise.all(queries);
+    
+            // Extract only the data results (ignoring schema metadata)
+            const user = results
+                .map(res => res[0])  // Extract only the first element of each query result
+                .find(data => data.length > 0); // Find the first non-empty result
+    
+            if (user && user.length > 0) {
                 const [checkIns] = await db_replus.query('INSERT INTO asistencia_enligtenment (uuid, action) VALUES (?, ?)', [uuid, action]);
                 if (checkIns.affectedRows === 0) {
                     return {
@@ -179,7 +185,7 @@ export class AttendanceModel {
                     }
                 }
                 return {
-                    result: result[0],
+                    result: user[0],
                     message: 'Usuario encontrado',
                     status: true
                 }
@@ -200,19 +206,20 @@ export class AttendanceModel {
     static async save_acceso_innovationarea({ uuid, action }) {        
         try {
             const queries = [
-                db_replus.query('SELECT * FROM users WHERE uuid = ? limit 1', [uuid]),
-                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? limit 1', [uuid])
+                db_replus.query('SELECT * FROM users WHERE uuid = ? LIMIT 1', [uuid]),
+                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? LIMIT 1', [uuid])
             ];
-
-            const [resultGral, resultEcom, resultExhibitor, resultPonente] = await Promise.all(queries);
-
-            const result = resultGral.length > 0 ? resultGral :
-                           resultEcom.length > 0 ? resultEcom :
-                           resultExhibitor.length > 0 ? resultExhibitor :
-                           resultPonente;
-            if (result.length > 0) {
+            
+            const results = await Promise.all(queries);
+    
+            // Extract only the data results (ignoring schema metadata)
+            const user = results
+                .map(res => res[0])  // Extract only the first element of each query result
+                .find(data => data.length > 0); // Find the first non-empty result
+    
+            if (user && user.length > 0) {
                 const [checkIns] = await db_replus.query('INSERT INTO asistencia_innovation (uuid, action) VALUES (?, ?)', [uuid, action]);
                 if (checkIns.affectedRows === 0) {
                     return {
@@ -221,7 +228,7 @@ export class AttendanceModel {
                     }
                 }
                 return {
-                    result: result[0],
+                    result: user[0],
                     message: 'Usuario encontrado',
                     status: true
                 }
@@ -242,19 +249,20 @@ export class AttendanceModel {
     static async save_acceso_area_vip({ uuid, action }) {        
         try {
             const queries = [
-                db_replus.query('SELECT * FROM users WHERE uuid = ? limit 1', [uuid]),
-                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? limit 1', [uuid]),
-                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? limit 1', [uuid])
+                db_replus.query('SELECT * FROM users WHERE uuid = ? LIMIT 1', [uuid]),
+                db_replus.query('SELECT * FROM users_ecomondo WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM exhibitors WHERE uuid = ? LIMIT 1', [uuid]),
+                dashboard.query('SELECT * FROM ponentes WHERE uuid = ? LIMIT 1', [uuid])
             ];
-
-            const [resultGral, resultEcom, resultExhibitor, resultPonente] = await Promise.all(queries);
-
-            const result = resultGral.length > 0 ? resultGral :
-                           resultEcom.length > 0 ? resultEcom :
-                           resultExhibitor.length > 0 ? resultExhibitor :
-                           resultPonente;
-            if (result.length > 0) {
+            
+            const results = await Promise.all(queries);
+    
+            // Extract only the data results (ignoring schema metadata)
+            const user = results
+                .map(res => res[0])  // Extract only the first element of each query result
+                .find(data => data.length > 0); // Find the first non-empty result
+    
+            if (user && user.length > 0) {
                 const [checkIns] = await db_replus.query('INSERT INTO asistencia_area_vip (uuid, action) VALUES (?, ?)', [uuid, action]);
                 if (checkIns.affectedRows === 0) {
                     return {
@@ -263,7 +271,7 @@ export class AttendanceModel {
                     }
                 }
                 return {
-                    result: result[0],
+                    result: user[0],
                     message: 'Usuario encontrado',
                     status: true
                 }

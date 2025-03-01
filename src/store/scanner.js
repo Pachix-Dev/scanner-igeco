@@ -16,5 +16,5 @@ const useScanner = create(
             name: 'scanner',
         }
     )
-);
-export default useScanner;
+)
+export {useScanner};
