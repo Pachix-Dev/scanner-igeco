@@ -38,7 +38,6 @@ export function QrScanner() {
       }, 3000)
       return
     }
-    console.log(scenarioRef.current)
     const url = import.meta.env.DEV
       ? 'http://localhost:3011'
       : 'https://scanner.igeco.mx/server'
@@ -97,7 +96,7 @@ export function QrScanner() {
           <option value='EnlightenmentArea'>ENLIGHTENMENT AREA</option>
           <option value='InnovationArea'>INSTALLERS & INNOVATION AREA</option>
           <option value='VIP'>PROGRAMA VIP</option>
-          <option value='energyNight'>ENEGR NIGHT</option>
+          <option value='energyNight'>ENERGY NIGHT</option>
           <option value='EcoStage'>ECOSTAGE</option>
           <option value='EcoPitch'>ECOPITCH</option>
           <option value='AreaVip'>AREA VIP</option>
