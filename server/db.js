@@ -312,7 +312,7 @@ export class AttendanceModel {
                         }
                         else if (checkProduct.some(product => [3, 4, 5].includes(product.productId))) {
 
-                            const date = new Date(2025, 2, 5);
+                            const date = new Date(2025, 2, 7);
                             const today = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
 
                             if (checkProduct.some(product => today.includes(productsDates[product.productId]))) {
